@@ -1,6 +1,7 @@
 package Page;
 
 
+import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import lombok.Getter;
@@ -10,10 +11,13 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import utilities.ConfigReader;
 import utilities.ReusableMethods;
 
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,8 +29,8 @@ import static utilities.Driver.getAppiumDriver;
 public class QueryCardPage {
     public QueryCardPage() {
         PageFactory.initElements(new AppiumFieldDecorator(getAppiumDriver()), this);
-
     }
+    public static AndroidDriver driver= (AndroidDriver) getAppiumDriver();
 
     @AndroidFindBy(xpath = "(//android.widget.ImageView[1])[1]")
     private WebElement queryCardLogoElement;
@@ -142,6 +146,62 @@ public class QueryCardPage {
 
     @FindBy(xpath = "(//*[@class='android.widget.ImageView'])[3]")
     public WebElement removepopup;
+
+
+
+
+    @AndroidFindBy(id = "com.android.chrome:id/search_box_text")
+    private WebElement googleSearchBox;
+
+    @AndroidFindBy(id = "com.android.chrome:id/line_2")
+    private WebElement googleSearchClick;
+
+    // QueryCart url Locateleri
+
+    @AndroidFindBy(xpath = "//android.widget.TextView[@text=\"Log In\"]")
+    private WebElement queryCardUrlLogin;
+
+    @AndroidFindBy(uiAutomator = ("new UiSelector().resourceId(\"formEmail\")"))
+    private WebElement qcUrlEmailTextBox;
+
+    @AndroidFindBy(uiAutomator = ("new UiSelector().resourceId(\"formPassword\")"))
+    private WebElement qcUrlPasswordTextBox;
+
+    @AndroidFindBy(xpath = ("//android.widget.Button[@text=\"Sign In\"]"))
+    private WebElement qcUrlSigninButton;
+
+    public void googleSearchToQueryCart(){
+
+        ReusableMethods.wait(6);
+       // assertTrue(googleSearchBox.isEnabled());
+        googleSearchBox.sendKeys("querycart.com/#/home");
+
+
+        assertTrue(googleSearchClick.isEnabled());
+        googleSearchClick.click();
+
+    }
+
+    public void signInFromUrl(){
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.visibilityOf(queryCardUrlLogin));
+
+        assertTrue(queryCardUrlLogin.isEnabled());
+        queryCardUrlLogin.click();
+        ReusableMethods.wait(2);
+
+        assertTrue(qcUrlEmailTextBox.isEnabled());
+        qcUrlEmailTextBox.click();
+        qcUrlEmailTextBox.sendKeys("elifkesen.manager@querycart.com");
+
+        assertTrue(qcUrlPasswordTextBox.isEnabled());
+        qcUrlPasswordTextBox.click();
+        qcUrlPasswordTextBox.sendKeys("Query.05042025");
+
+       // assertTrue(qcUrlSigninButton.isEnabled());
+       // qcUrlSigninButton.click();
+    }
 
 }
 

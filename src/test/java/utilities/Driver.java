@@ -3,6 +3,7 @@ package utilities;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.options.UiAutomator2Options;
+import org.openqa.selenium.NoSuchSessionException;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -42,7 +43,12 @@ public class             Driver {
                         );
                     } catch (MalformedURLException e) {
                         throw new RuntimeException(e);
+                    } catch (NoSuchSessionException e){
+                        System.out.println("No session exception occurred: " + e.getMessage());
+                        Driver.quitAppiumDriver(); // Mevcut driver oturumunu kapat
+                        Driver.getAppiumDriver(); // Yeni driver başlat
                     }
+
 
                     break;
                 case "IOS":
@@ -59,6 +65,37 @@ public class             Driver {
          */
 
         return driver;
+    }
+    public static void startActivity(String appPackage, String appActivity, boolean noReset) {
+        if (getAppiumDriver() instanceof AndroidDriver) {
+            UiAutomator2Options options = new UiAutomator2Options();
+            options.setPlatformName("Android").setAutomationName("UiAutomator2");
+            options.setAppPackage(appPackage);
+            options.setAppActivity(appActivity);
+            options.setNoReset(noReset); // noReset ayarı
+            options.setUdid("emulator-5554");
+
+            try {
+                // Mevcut sürücüyle yeni bir aktivite başlatılıyor
+                ((AndroidDriver) getAppiumDriver()).startActivity(
+                        new io.appium.java_client.android.Activity(appPackage, appActivity)
+                );
+            } catch (Exception e) {
+                throw new RuntimeException("Aktivite başlatılamadı: " + e.getMessage());
+            }
+        } else {
+            throw new UnsupportedOperationException("Bu özellik yalnızca Android cihazlar için geçerlidir.");
+        }
+    }
+
+    public static void terminateChrome() {
+        if (driver != null) {
+            try {
+                ((AndroidDriver) driver).terminateApp("com.android.chrome");
+            } catch (Exception e) {
+                System.out.println("Chrome kapatılamadı: " + e.getMessage());
+            }
+        }
     }
 
     public static void quitAppiumDriver() {

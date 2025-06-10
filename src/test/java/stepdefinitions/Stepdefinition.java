@@ -1,8 +1,11 @@
 package stepdefinitions;
 
 import Page.QueryCardPage;
+import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
+import org.junit.After;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -21,7 +24,9 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
+import static Page.QueryCardPage.driver;
 import static org.junit.Assert.assertTrue;
 import static utilities.Driver.getAppiumDriver;
 import static utilities.Driver.quitAppiumDriver;
@@ -107,7 +112,7 @@ public class Stepdefinition extends OptionsMet {
     public void user_confirms_that_categories_appear_on_the_screen() {
         // for (int i = 0; i <categoriesMen.size(); i++) {
         //  assertTrue(categoriesMen.get(i).);
-       //  }
+        //  }
     }
 
     @Given("User clicks phone number textbox and {string} phone number")
@@ -236,5 +241,48 @@ public class Stepdefinition extends OptionsMet {
         System.out.println("Wishlist Item Quantity when wishlist is empty: " + wishQuantityText);
 
     }
-}
+
+    @Given("Switching from Query Cart application to Google Chrome")
+    public void switching_from_query_cart_application_to_google_chrome() {
+        ReusableMethods.wait(3);
+        Driver.startActivity("com.android.chrome", "com.google.android.apps.chrome.Main", false);
+        new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.id("com.android.chrome:id/search_box_text")));
+
+        /*
+        Uygulama switch yapiyoruz ve Chrome'a geciyoruz.
+         */
+    }
+
+    @Given("Go to the Query Cart url and log in with admin information")
+    public void go_to_the_query_cart_url_and_log_in_with_admin_information() {
+        card.googleSearchToQueryCart();
+        ReusableMethods.wait(5);
+        card.signInFromUrl();
+        /*
+        Chrome uzerinden QueryCart url'ine gidiyoruz ve admin bilgileri ile giris yapiyoruz
+         */
+        // Driver.terminateChrome();
+        driver.terminateApp("com.android.chrome");
+        driver.activateApp("com.wise.querycart");
+    }
+
+    @Given("Returns to the Query Cart app as the user")
+    public void returns_to_the_query_cart_app_as_the_user() {
+        if (((AndroidDriver) Driver.getAppiumDriver()).isAppInstalled("com.android.chrome")) {
+            ((AndroidDriver) Driver.getAppiumDriver()).terminateApp("com.android.chrome");
+        }
+
+        Driver.startActivity("com.wise.querycart", "com.wise.querycart.MainActivity", false);
+
+        ReusableMethods.wait(5);
+        /*
+        Tekrar QueryCart app'e donuyoruz
+         */
+    }
+
+
+    }
+
+
 
