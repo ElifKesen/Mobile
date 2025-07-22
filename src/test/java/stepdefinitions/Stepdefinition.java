@@ -252,6 +252,11 @@ public class Stepdefinition extends OptionsMet {
         /*
         Uygulama switch yapiyoruz ve Chrome'a geciyoruz.
          */
+
+
+
+
+
     }
 
     @Given("Go to the Query Cart url and log in with admin information")
